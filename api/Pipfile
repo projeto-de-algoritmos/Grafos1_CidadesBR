@@ -5,8 +5,10 @@ name = "pypi"
 
 [packages]
 fastapi = "*"
+uvicorn = {extras = ["standard"], version = "*"}
+pandas = "*"
 
 [dev-packages]
 
 [requires]
-python_version = "3.9"
+python_version = "3.8"
