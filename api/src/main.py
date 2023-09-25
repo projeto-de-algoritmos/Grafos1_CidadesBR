@@ -1,21 +1,41 @@
 from fastapi import FastAPI
-import pandas as pd
-import os
+from fastapi.middleware.cors import CORSMiddleware
+
+from .schemas.city import City
+from .schemas.route import Coordinate
+from .data.graph import create_graph
 
 app = FastAPI()
 
-base_dir = os.path.dirname(os.path.abspath(__file__))
-df = pd.read_csv(os.path.join(base_dir, "data", "tabela.csv"))
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+    allow_credentials=True,
+)
 
-@app.get("/city")
-async def list_city():
-    cities = []
-    
-    for id, nome in zip(df["ID"], df["NM_DISTRITO"]):
-        cities.append({"id": id, "nome": nome})
+graph = create_graph()
 
-    return cities
 
-@app.get("/route/{origin}/{destiny}")
-async def route(origin: str, destiny: str):
-    return f"Rota de {origin} para {destiny}"
+@app.get("/api/city")
+async def list_city() -> list[City]:
+    return [
+        City(
+            id=node.id,
+            name=node.name,
+        )
+        for node in graph.list_nodes()
+    ]
+
+
+# TODO: Implement the route endpoint
+@app.get("/api/route/{origin_id}/{destiny_id}")
+async def route(origin_id: int, destiny_id: int) -> list[Coordinate]:
+    origin = graph.get_node(origin_id)
+    destiny = graph.get_node(destiny_id)
+
+    return [
+        Coordinate(latitude=origin.latitude, longitude=origin.longitude),
+        Coordinate(latitude=destiny.latitude, longitude=destiny.longitude),
+    ]

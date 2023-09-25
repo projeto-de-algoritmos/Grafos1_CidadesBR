@@ -4,11 +4,14 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-fastapi = "*"
-uvicorn = {extras = ["standard"], version = "*"}
-pandas = "*"
+fastapi = "<=0.103.*"
+uvicorn = {extras = ["standard"], version = "<=0.23.*"}
+pandas = "<=2.1.*"
 
 [dev-packages]
+black = "*"
+flake8 = "*"
+isort = "*"
 
 [requires]
-python_version = "3.8"
+python_version = "3.11"
