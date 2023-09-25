@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from src.schemas.route import Coordinate
+from ..schemas.route import Coordinate, Stop
 from .dataframe import DATA
 
 
@@ -38,14 +38,23 @@ class Graph:
     def get_node(self, id: int) -> Node:
         return self.graph[id].node
 
-    def search_route(self, source_id: int, target_id: int) -> list[Coordinate]:
+    def search_route(self, source_id: int, target_id: int) -> list[Stop]:
         source = self.graph[source_id]
         target = self.graph[target_id]
 
         current_distance = self._compute_distance(source.node, target.node)
         current_node = source.node
 
-        route = [Coordinate(latitude=current_node.latitude, longitude=current_node.longitude)]
+        route = [
+            Stop(
+                id=current_node.id,
+                name=current_node.name,
+                coordinate=Coordinate(
+                    latitude=current_node.latitude,
+                    longitude=current_node.longitude,
+                ),
+            )
+        ]
 
         while current_node.id != target.node.id:
             count = 0
@@ -58,8 +67,13 @@ class Graph:
                     current_node = neighbor.node
 
                     route.append(
-                        Coordinate(
-                            latitude=current_node.latitude, longitude=current_node.longitude
+                        Stop(
+                            id=current_node.id,
+                            name=current_node.name,
+                            coordinate=Coordinate(
+                                latitude=current_node.latitude,
+                                longitude=current_node.longitude,
+                            ),
                         )
                     )
                     break

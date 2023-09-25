@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .schemas.city import City
-from .schemas.route import Coordinate
+from .schemas.route import Stop
 from .data.graph import create_graph
 
 app = FastAPI()
@@ -31,5 +31,5 @@ async def list_city() -> list[City]:
 
 # TODO: Implement the route endpoint
 @app.get("/api/route/{origin_id}/{destiny_id}")
-async def route(origin_id: int, destiny_id: int) -> list[Coordinate]:
+async def route(origin_id: int, destiny_id: int) -> list[Stop]:
     return graph.search_route(origin_id, destiny_id)
