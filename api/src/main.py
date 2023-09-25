@@ -32,10 +32,4 @@ async def list_city() -> list[City]:
 # TODO: Implement the route endpoint
 @app.get("/api/route/{origin_id}/{destiny_id}")
 async def route(origin_id: int, destiny_id: int) -> list[Coordinate]:
-    origin = graph.get_node(origin_id)
-    destiny = graph.get_node(destiny_id)
-
-    return [
-        Coordinate(latitude=origin.latitude, longitude=origin.longitude),
-        Coordinate(latitude=destiny.latitude, longitude=destiny.longitude),
-    ]
+    return graph.search_route(origin_id, destiny_id)

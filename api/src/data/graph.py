@@ -1,3 +1,5 @@
+from fastapi import HTTPException
+from src.schemas.route import Coordinate
 from .dataframe import DATA
 
 
@@ -19,12 +21,16 @@ class Graph:
     def __init__(self):
         self.graph: dict[int, GraphValue] = {}
 
+    def _compute_distance(self, source: Node, target: Node) -> float:
+        return (
+            (source.longitude - target.longitude) ** 2 + (source.latitude - target.latitude) ** 2
+        ) ** 0.5
+
     def add_node(self, node: Node):
         self.graph[node.id] = GraphValue(node, [])
 
-    def add_edge(self, origin: int, destiny: int):
-        self.graph[origin].neighbors.append(destiny)
-        self.graph[destiny].neighbors.append(origin)
+    def add_neighbor(self, id: int, neighbor: int):
+        self.graph[id].neighbors.append(neighbor)
 
     def list_nodes(self) -> list[Node]:
         return [value.node for value in self.graph.values()]
@@ -32,30 +38,49 @@ class Graph:
     def get_node(self, id: int) -> Node:
         return self.graph[id].node
 
-    def dfs(self, origin: int, destiny: int) -> set[int] | None:
-        visited = set()
-        stack = [origin]
+    def search_route(self, source_id: int, target_id: int) -> list[Coordinate]:
+        source = self.graph[source_id]
+        target = self.graph[target_id]
 
-        while stack:
-            node = stack.pop()
+        current_distance = self._compute_distance(source.node, target.node)
+        current_node = source.node
 
-            if node not in visited:
-                visited.add(node)
+        route = [Coordinate(latitude=current_node.latitude, longitude=current_node.longitude)]
 
-                if node == destiny:
-                    return visited
+        while current_node.id != target.node.id:
+            count = 0
+            for neighbor_id in self.graph[current_node.id].neighbors:
+                neighbor = self.graph[neighbor_id]
 
-                stack.extend(self.graph[node].neighbors)
+                distance = self._compute_distance(neighbor.node, target.node)
+                if distance < current_distance:
+                    current_distance = distance
+                    current_node = neighbor.node
 
-        return None
+                    route.append(
+                        Coordinate(
+                            latitude=current_node.latitude, longitude=current_node.longitude
+                        )
+                    )
+                    break
+                else:
+                    count += 1
+
+            if count == len(self.graph[current_node.id].neighbors):
+                raise HTTPException(status_code=508, detail="Could not find a route")
+
+        return route
 
 
 def create_graph() -> Graph:
     graph = Graph()
-    iterator = zip(DATA["ID"], DATA["NM_DISTRITO"], DATA["LONG"], DATA["LAT"])
+    iterator = zip(DATA["id"], DATA["name"], DATA["lat"], DATA["lon"], DATA["neighbors"])
 
-    for id, name, longitude, latitude in iterator:
+    for id, name, latitude, longitude, neighbors in iterator:
         node = Node(id, name, longitude, latitude)
         graph.add_node(node)
+
+        for neighbor in neighbors[1:-1].split(", "):
+            graph.add_neighbor(id, int(neighbor))
 
     return graph

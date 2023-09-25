@@ -80,10 +80,20 @@ export default function App() {
 
     if (getRouteStatus === "error") {
       if (getRouteError instanceof AxiosError) {
-        return <p>Error: {getRouteError.message}</p>;
+        return (
+          <>
+            <p>Error: {getRouteError.message}</p>
+            <button type="submit">Buscar</button>
+          </>
+        );
       }
 
-      return <p>Unknown error</p>;
+      return (
+        <>
+          <p>Unknown error</p>
+          <button type="submit">Buscar</button>
+        </>
+      );
     }
 
     return <button type="submit">Buscar</button>;
