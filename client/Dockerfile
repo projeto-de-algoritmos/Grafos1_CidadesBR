@@ -1,0 +1,18 @@
+FROM node:lts AS build
+
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+
+RUN npm install
+
+COPY . .
+
+CMD ["npm", "run", "build"]
+
+FROM nginx:1.25
+
+# copy the dist folder from the build stage to the nginx html folder
+COPY --from=build /app/dist /usr/share/nginx/html
+
+EXPOSE 80
