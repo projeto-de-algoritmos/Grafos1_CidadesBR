@@ -103,9 +103,15 @@ export default function App() {
     <main className={styles.container}>
       <form className={styles.searchForm} onSubmit={handleSubmit}>
         <div className={styles.selectContainer}>
-          <CitySelect cities={cities} value={origin} onChange={setOrigin} />
+          <CitySelect
+            label="Cidade de origem"
+            cities={cities}
+            value={origin}
+            onChange={setOrigin}
+          />
 
           <CitySelect
+            label="Cidade de destino"
             cities={cities}
             value={destination}
             onChange={setDestination}

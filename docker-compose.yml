@@ -5,16 +5,8 @@ services:
     build: ./client
     ports:
       - "5173:80"
-    networks:
-      - app-network
 
   api:
     build: ./api
     ports:
       - "8000:8000"
-    networks:
-      - app-network
-
-networks:
-  app-network:
-    driver: bridge
