@@ -50,3 +50,7 @@ http://localhost:5173/
 ## Uso
 
 Deve-se escolher duas cidades do Brasil e a aplicação recomendará uma rota.
+
+## Vídeos do Projeto
+
+- [Entrega 1](https://youtu.be/c5v5h5n1uLU)
