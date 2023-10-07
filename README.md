@@ -53,4 +53,10 @@ Deve-se escolher duas cidades do Brasil e a aplicação recomendará uma rota.
 
 ## Vídeos do Projeto
 
-- [Entrega 1](https://youtu.be/c5v5h5n1uLU)
+> Entrega 1
+>
+> <video width="320" height="240" controls>
+>  <source src="./docs/apresentação.mp4" type="video/mp4">
+> </video>
+>
+> [Link](https://youtu.be/c5v5h5n1uLU)
